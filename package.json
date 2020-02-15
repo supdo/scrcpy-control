@@ -23,7 +23,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "scrcpy-gui",
+    "productName": "手机控",
     "appId": "com.supdo.app.scrcpygui",
     "directories": {
       "output": "build"
@@ -50,7 +50,8 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "artifactName": "${productName}_Setup_${version}.${ext}"
     },
     "linux": {
       "icon": "build/icons"
