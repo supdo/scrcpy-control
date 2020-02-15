@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/scrcpy-gui.iml" filepath="$PROJECT_DIR$/.idea/scrcpy-gui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/scrcpy-control.iml" filepath="$PROJECT_DIR$/.idea/scrcpy-control.iml" />
     </modules>
   </component>
 </project>
