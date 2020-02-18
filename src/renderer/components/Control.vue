@@ -67,6 +67,7 @@
 </template>
 
 <script>
+    import {mapGetters, mapState} from "vuex";
     import adb from "@/plugins/adb.js"
     import scrcpy from "@/plugins/scrcpy";
     import wireless from "@/plugins/wireless"
@@ -105,12 +106,38 @@
                 deleteIndex: -1,
                 devices: {},
                 logList: [],
+                myConfig: {},
+                isTrackDevices: false,
             }
         },
+        computed: {
+            ...mapGetters("Config", ["getConfig"]),
+        },
         mounted() {
-            this.trackDevices();
+            let that = this;
+            eventBus.$on('initControl', function(){
+                that.init();
+            });
+            this.init();
         },
         methods: {
+            init: function(){
+                this.myConfig = this.getConfig;
+                if(this.myConfig.binPath.length > 0){
+                    if(!this.isTrackDevices){
+                        adb.createClient(this.myConfig.binPath);
+
+                        this.trackDevices();
+                        this.isTrackDevices = true;
+                    }
+                    this.spinning = false;
+                    this.spinningTip = tip;
+                }else{
+                    this.spinning = true;
+                    this.spinningTip = "核心参数配置中...";
+                    eventBus.$emit("changeTab", this.$cfg.tabName.param);
+                }
+            },
             connect: function () {
                 var that = this;
                 this.form.validateFields((err, values) => {
@@ -206,12 +233,11 @@
 
                     });
                 })
-
             },
             // 投屏
             projection: function (device) {
                 let that = this;
-                let scrcpyProcess = scrcpy.projection(device.deviceCode, function (action, data) {
+                let scrcpyProcess = scrcpy.projection(that.myConfig, device.deviceCode, function (action, data) {
                     console.log('{0}: {1}'.format(action, data == null ? "null" : data.toString()))
                     that.addLog(data == null ? "null" : data.toString(), action);
                     if (action == that.$cfg.processAction.data) {
@@ -300,7 +326,7 @@
 
 <style>
     #control {
-        padding: 10px;
+        padding: 10px 16px;
     }
 
     #control .control-bar {

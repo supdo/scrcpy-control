@@ -3,9 +3,9 @@
         <a-form :form="form">
             <a-form-item label="Scrcpy目录" :label-col="{ span: 5 }" :wrapper-col="{ span: 16 }">
                 <a-tooltip title="Scrcpy程序的目录，包含scrcpy和adb程序">
-                <a-input @click="choiceBinPath" :read-only="true" placeholder="请选择Scrcpy目录"
+                <a-input @click="choiceBinPath" :read-only="true" placeholder="请选择Scrcpy目录" allowClear
                         v-decorator="['binPath', {
-                            rules: [{ required: true, message: '请选择程序目录' }],
+                            rules: [{ required: false, message: '请选择程序目录' }],
                             initialValue: myConfig.binPath
                         }]"
                 />
@@ -124,7 +124,7 @@
                         values["bitRate"] = that.myConfig.bitRate;
                         that.save(values);
                         that.$notice.success("保存成功！");
-
+                        eventBus.$emit("initControl");
                     }
                 });
             }
@@ -138,6 +138,6 @@
     }
 
     #config .ant-form-item {
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
 </style>

@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'scrcpy-gui'
+    name: 'App'
   }
 </script>
 

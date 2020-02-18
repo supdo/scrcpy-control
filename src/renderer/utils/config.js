@@ -29,10 +29,16 @@ const logType = {
     error: "error",
 }
 
+const tabName = {
+    control : "control",
+    param: "param",
+}
+
 export default {
     adbAction,
     adbConnect,
     processAction,
     linkType,
     logType,
+    tabName,
 }

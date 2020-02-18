@@ -1,6 +1,10 @@
 import adb from 'adbkit'
 
-const client = adb.createClient()
+let client = null
+
+const createClient = function (binPath) {
+    client = adb.createClient({bin: "{0}\\adb".format(binPath)})
+}
 
 const trackDevices = function (that, cb) {
     client.trackDevices()
@@ -73,6 +77,7 @@ const disConnect = function (args, cb) {
 }
 
 export default {
+    createClient,
     trackDevices,
     getDeviceList,
     connect,
