@@ -1,50 +1,61 @@
 <template>
     <div id="home">
-        <div class="main-control">
-            <a-button type="primary" shape="round" size="large" class="main-btn" @click="startScrcpy" v-if="!running">
-                <a-icon type="play-circle" class="main-btn-icon" />启动
-            </a-button>
-            <a-button type="primary" shape="round" size="large" class="main-btn main-btn-running" @click="stopScrcpy" v-if="running">
-                <a-icon type="close-circle" class="main-btn-icon" />停止
-            </a-button>
-            <a-button icon="setting" size="small" style="float: left; margin-top: 5px;">系统配置</a-button>
-            <a-button :icon="showParams ? 'up' : 'down' " size="small" style="float: right; margin-top: 5px;" @click="showParams=!showParams">启动参数</a-button>
-        </div>
-        <div class="more-control" v-if="showParams">
-            <div>
-                <a-divider orientation="left" class="btn-divider">启动参数</a-divider>
-                <a-tooltip title="码率越大越清晰，但是延迟也会增加。"><span class="btn-title-first">码率:</span></a-tooltip>
-                <a-radio-group buttonStyle="solid" size="small" v-model="execParams.bitRate">
-                    <a-radio-button value="16M">16M</a-radio-button>
-                    <a-radio-button value="12M">12M</a-radio-button>
-                    <a-radio-button value="8M">8M</a-radio-button>
-                    <a-radio-button value="4M">4M</a-radio-button>
-                    <a-radio-button value="2M">2M</a-radio-button>
-                </a-radio-group>
-                <a-tooltip title=""><span class="btn-title">最大帧数:</span></a-tooltip>
-                <a-input style="width: 50px;" size="small" :value="execParams.maxFps" />
-            </div>
-            <div>
-                <a-tooltip title="息屏：Ctrl+o；解锁：Ctrl+p"><span class="btn-title-first">允许息屏:</span></a-tooltip>
-                <a-switch :defaultChecked="execParams.turnScreenOff" size="small" class="btn-switch" @change="(checked) => {execParams.turnScreenOff=checked}" />
-                <a-tooltip title="息屏：Ctrl+o；解锁：Ctrl+p"><span class="btn-title">无线连接:</span></a-tooltip>
-                <a-switch :defaultChecked="wireless" size="small" class="btn-switch" @change="(checked) => {if(checked){scanWifi();} wireless=checked;}" />
-                <a-select style="width: 150px" placeholder="IP地址" showSearch :filterOption="true" size="small" v-if="wireless">
-                    <a-select-option v-for="ip in ipList" :key="ip" value="ip">{{ip}}</a-select-option>
-                </a-select>
-            </div>
-        </div>
-        <div class="main-log">
-            <a-list class="log-list" :class="{'log-list-less': showParams}" size="small" bordered :dataSource="logList">
-                <a-list-item slot="renderItem" slot-scope="log">
-                    <span :class="'log-' + log.kind">{{log.time}} - {{log.data}}</span>
-                </a-list-item>
-            </a-list>
-        </div>
+        <a-tabs defaultActiveKey="control2">
+            <a-tab-pane tab="参数管理" key="param">Content of Tab Pane 1</a-tab-pane>
+            <a-tab-pane tab="投屏" key="control" forceRender>
+                <div class="main-control">
+                    <a-button type="primary" shape="round" size="large" class="main-btn" @click="startScrcpy" v-if="!running">
+                        <a-icon type="play-circle" class="main-btn-icon" />启动
+                    </a-button>
+                    <a-button type="primary" shape="round" size="large" class="main-btn main-btn-running" @click="stopScrcpy" v-if="running">
+                        <a-icon type="close-circle" class="main-btn-icon" />停止
+                    </a-button>
+                    <a-button icon="setting" size="small" style="float: left; margin-top: 5px;">系统配置</a-button>
+                    <a-button :icon="showParams ? 'up' : 'down' " size="small" style="float: right; margin-top: 5px;" @click="showParams=!showParams">启动参数</a-button>
+                </div>
+                <div class="more-control" v-if="showParams">
+                    <div>
+                        <a-divider orientation="left" class="btn-divider">启动参数</a-divider>
+                        <a-tooltip title="码率越大越清晰，但是延迟也会增加。"><span class="btn-title-first">码率:</span></a-tooltip>
+                        <a-radio-group buttonStyle="solid" size="small" v-model="execParams.bitRate">
+                            <a-radio-button value="16M">16M</a-radio-button>
+                            <a-radio-button value="12M">12M</a-radio-button>
+                            <a-radio-button value="8M">8M</a-radio-button>
+                            <a-radio-button value="4M">4M</a-radio-button>
+                            <a-radio-button value="2M">2M</a-radio-button>
+                        </a-radio-group>
+                        <a-tooltip title=""><span class="btn-title">最大帧数:</span></a-tooltip>
+                        <a-input style="width: 50px;" size="small" :value="execParams.maxFps" />
+                    </div>
+                    <div>
+                        <a-tooltip title="息屏：Ctrl+o；解锁：Ctrl+p"><span class="btn-title-first">允许息屏:</span></a-tooltip>
+                        <a-switch :defaultChecked="execParams.turnScreenOff" size="small" class="btn-switch" @change="(checked) => {execParams.turnScreenOff=checked}" />
+                        <a-tooltip title="息屏：Ctrl+o；解锁：Ctrl+p"><span class="btn-title">无线连接:</span></a-tooltip>
+                        <a-switch :defaultChecked="wireless" size="small" class="btn-switch" @change="(checked) => {if(checked){scanWifi();} wireless=checked;}" />
+                        <a-select style="width: 150px" placeholder="IP地址" showSearch :filterOption="true" size="small" v-if="wireless">
+                            <a-select-option v-for="ip in ipList" :key="ip" value="ip">{{ip}}</a-select-option>
+                        </a-select>
+                    </div>
+                </div>
+                <div class="main-log">
+                    <a-list class="log-list" :class="{'log-list-less': showParams}" size="small" bordered :dataSource="logList">
+                        <a-list-item slot="renderItem" slot-scope="log">
+                            <span :class="'log-' + log.kind">{{log.time}} - {{log.data}}</span>
+                        </a-list-item>
+                    </a-list>
+                </div>
+            </a-tab-pane>
+            <a-tab-pane tab="投屏2" key="control2" forceRender>
+                <Control></Control>
+            </a-tab-pane>
+        </a-tabs>
     </div>
 </template>
 
 <script>
+
+    import adb from "@/plugins/adb.js"
+    import Control from "@/components/Control";
     const { spawn } = require('child_process')
     const os = require('os')
     const net = require('net')
@@ -61,6 +72,9 @@
     }
     export default {
         name: "Home",
+        components: {
+            Control,
+        },
         data: function () {
             return {
                 cmdPath: "E:\\MyFiles\\scrcpy-win64-v1.10\\",
@@ -89,6 +103,9 @@
                 },
                 deep: true
             },
+        },
+        mounted() {
+
         },
         methods: {
             startScrcpy: function () {
@@ -246,9 +263,12 @@
     }
 </script>
 
-<style scoped>
+<style>
     #home {
-        padding: 10px;
+    }
+
+    #home .ant-tabs-bar {
+        margin: 0;
     }
 
     #home .main-control {

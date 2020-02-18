@@ -11,6 +11,8 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
+
 let mainWindow
 const Menu = electron.Menu
 const winURL = process.env.NODE_ENV === 'development'
@@ -27,7 +29,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     useContentSize: false,
     height: 800,
-    width: 460,
+    width: 600,
     webPreferences: {
       nodeIntegration: true // 是否集成 Nodejs,把之前预加载的js去了，发现也可以运行
     }

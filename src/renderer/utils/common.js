@@ -31,6 +31,43 @@ String.prototype.format = function(args) {
 }
 
 /**
+ * 判断字符串的类型
+ * @param type
+ * @returns {boolean|*}
+ */
+String.prototype.isType = function(type){
+    const rules = {
+        email(str) {
+            // eslint-disable-next-line no-useless-escape
+            return (/^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})$/).test(str)
+        },
+        number(str) {
+            return (/^[0-9]$/).test(str)
+        },
+        english(str) {
+            return (/^[a-zA-Z]+$/).test(str)
+        },
+        text(str) {
+            return (/^\w+$/).test(str)
+        },
+        chinese(str) {
+            return (/^[\u4E00-\u9FA5]+$/).test(str)
+        },
+        lower(str) {
+            return (/^[a-z]+$/).test(str)
+        },
+        upper(str) {
+            return (/^[A-Z]+$/).test(str)
+        },
+        ip(str) {
+            return (/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(:\d{4})?$/).test(str)
+        }
+    };
+    let str = this;
+    return rules[type] ? rules[type](str) : false;
+}
+
+/**
  *对Date的扩展，将 Date 转化为指定格式的String
  *月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
  *年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)

@@ -4,6 +4,8 @@ import "./utils/common.js"
 import App from './App'
 import router from './router'
 import store from './store'
+import config from "./utils/config"
+import common from '@/utils/common.vue'
 import * as myAntd from 'ant-design-vue'
 
 function initAntd () {
@@ -43,7 +45,14 @@ function initAntd () {
   Vue.use(myAntd.Upload)
   Vue.use(myAntd.Steps)
   Vue.use(myAntd.Popconfirm)
+
+  Vue.prototype.$message = myAntd.message
+
+  Vue.prototype.$cfg = config;
+
+  Vue.prototype.$notice = common.notice;
 }
+
 
 initAntd()
 
