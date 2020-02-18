@@ -1,7 +1,9 @@
 <template>
     <div id="home">
         <a-tabs defaultActiveKey="control2">
-            <a-tab-pane tab="参数管理" key="param">Content of Tab Pane 1</a-tab-pane>
+            <a-tab-pane tab="参数管理" key="param">
+                <Config></Config>
+            </a-tab-pane>
             <a-tab-pane tab="投屏" key="control" forceRender>
                 <div class="main-control">
                     <a-button type="primary" shape="round" size="large" class="main-btn" @click="startScrcpy" v-if="!running">
@@ -53,9 +55,9 @@
 </template>
 
 <script>
-
     import adb from "@/plugins/adb.js"
     import Control from "@/components/Control";
+    import Config from "@/components/Config";
     const { spawn } = require('child_process')
     const os = require('os')
     const net = require('net')
@@ -73,7 +75,7 @@
     export default {
         name: "Home",
         components: {
-            Control,
+            Control, Config,
         },
         data: function () {
             return {
@@ -264,7 +266,11 @@
 </script>
 
 <style>
+    body {
+        overflow-y: hidden;
+    }
     #home {
+
     }
 
     #home .ant-tabs-bar {

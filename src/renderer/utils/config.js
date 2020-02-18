@@ -22,9 +22,17 @@ const linkType = {
     wireless: "无线",
 }
 
+const logType = {
+    success: "success",
+    info: "info",
+    warning: "warning",
+    error: "error",
+}
+
 export default {
     adbAction,
     adbConnect,
     processAction,
     linkType,
+    logType,
 }

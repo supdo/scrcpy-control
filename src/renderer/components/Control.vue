@@ -55,9 +55,14 @@
                 </template>
             </a-table>
 
-            <a-button type="primary" @click="scanWIfi">扫描无线网络</a-button>
+            <a-button v-show="false" type="primary" @click="scanWIfi">扫描无线网络</a-button>
             <a-divider orientation="left">日志</a-divider>
         </a-spin>
+        <div class="log-list">
+            <div class="log-info" v-for="(log, index) in logList" :key="index" :class="'log-info-' + log.kind">
+                {{log.time}} - {{log.kind}} - {{log.data}}
+            </div>
+        </div>
     </div>
 </template>
 
@@ -99,6 +104,7 @@
                 deviceList: [],
                 deleteIndex: -1,
                 devices: {},
+                logList: [],
             }
         },
         mounted() {
@@ -111,10 +117,12 @@
                     if (!err) {
                         if (!values.ip.isType("ip")) {
                             that.$notice.error("输入的ip格式不正确！");
+                            that.addLog("输入的ip格式不正确！", that.$cfg.logType.error);
                             return;
                         }
                         if (that.deviceList.findIndex(item => values.ip === item.deviceCode.split(":")[0]) > -1) {
                             that.$notice.error("ip为{0}的设备已存在！".format(values.ip));
+                            that.addLog("ip为{0}的设备已存在！".format(values.ip), that.$cfg.logType.error);
                             return;
                         }
 
@@ -129,17 +137,20 @@
                             that.spinning = false;
                             that.spinningTip = tip;
                             if(action == that.$cfg.adbConnect.connected){
-                                this.getDeviceList();
+                                that.getDeviceList();
                             }else if(action == that.$cfg.adbConnect.error){
                                 that.$notice.error(info);
+                                that.addLog(info, that.$cfg.logType.error);
                             }
                         })
 
                         setTimeout(() => {
                             if (that.deviceList.findIndex(item => values.ip === item.deviceCode.split(":")[0]) > -1) {
                                 that.$notice.success("设备{0}连接成功！".format(values.ip));
+                                that.addLog("设备{0}连接成功！".format(values.ip), that.$cfg.logType.success);
                             } else {
                                 this.$notice.error("连接失败！")
+                                that.addLog("连接失败!", that.$cfg.logType.error);
                             }
                             that.spinning = false;
                             that.spinningTip = tip;
@@ -159,6 +170,7 @@
                         });
                         that.devices[deviceCode] = {}
                         that.$notice.success("设备{0}加入。".format(deviceCode));
+                        that.addLog("设备{0}加入。".format(deviceCode), that.$cfg.logType.success);
                     } else if (action == that.$cfg.adbAction.remove) {
                         let deviceCode = info.id;
                         let dataSource = [...that.deviceList];
@@ -168,6 +180,7 @@
                         }
                         that.deviceList = dataSource;
                         that.$notice.warn("设备{0}退出。".format(deviceCode));
+                        that.addLog("设备{0}退出。".format(deviceCode), that.$cfg.logType.warning);
                     }
                     that.$forceUpdate();
                 });
@@ -200,6 +213,7 @@
                 let that = this;
                 let scrcpyProcess = scrcpy.projection(device.deviceCode, function (action, data) {
                     console.log('{0}: {1}'.format(action, data == null ? "null" : data.toString()))
+                    that.addLog(data == null ? "null" : data.toString(), action);
                     if (action == that.$cfg.processAction.data) {
                         that.updateDeviceRunning(device.deviceCode, true);
                     } else if (action == that.$cfg.processAction.error) {
@@ -235,12 +249,14 @@
                     adb.disConnect({"ip": ip}, function (action, info) {
                         if(action == 'error'){
                             that.$notice.error("删除失败！"+info);
+                            that.addLog("删除失败", that.$cfg.logType.error);
                         }else{
 
                         }
                     });
                 }else{
                     that.$notice.error("ip格式不正确！");
+                    that.addLog("ip格式不正确!", that.$cfg.logType.error);
                 }
             },
             handleVisibleChange: function (index) {
@@ -269,6 +285,14 @@
                 let index = dataSource.findIndex(item => deviceCode === item.deviceCode);
                 dataSource[index][key] = obj;
                 that.deviceList = dataSource;
+            },
+            addLog: function (msg, type) {
+                type = type || "info";
+                this.logList.unshift({
+                    data: msg,
+                    time: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+                    kind: type
+                });
             }
         }
     }
@@ -284,7 +308,7 @@
     }
 
     #control .ant-divider-with-text-left {
-        margin: 5px 0 5px 0;
+        margin: 10px 0 2px 0;
         font-size: 13px;
     }
 
@@ -311,5 +335,26 @@
 
     #control .ant-table-body .table-delete-row {
         background-color: #FF3300;
+    }
+
+    #control .log-list {
+        height: 1440px;
+        overflow-y: hidden;
+    }
+    #control .log-list .log-info{
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    #control .log-list .log-info-success{
+        color: #42b983;
+    }
+
+    #control .log-list .log-info-warning{
+        color: goldenrod;
+    }
+
+    #control .log-list .log-info-error{
+        color: crimson;
     }
 </style>

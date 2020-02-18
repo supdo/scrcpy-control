@@ -45,6 +45,8 @@ function initAntd () {
   Vue.use(myAntd.Upload)
   Vue.use(myAntd.Steps)
   Vue.use(myAntd.Popconfirm)
+  Vue.use(myAntd.Slider)
+
 
   Vue.prototype.$message = myAntd.message
 
